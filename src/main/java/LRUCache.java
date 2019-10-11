@@ -42,7 +42,7 @@ public class LRUCache implements Cache {
                     //return e;
                 } else {
                     test.set(0, e);
-                    for (Integer j = 1; j < cache.length; j++){
+                    for (Integer j = 0; j < cache.length; j++){
                         if(cache[j] != null && cache[j] != e && count < cache.length){
                             test.add(cache[j]);
                             count++;
@@ -59,6 +59,10 @@ public class LRUCache implements Cache {
                 }
 
             }
+        }
+
+        while(test.size() > size){
+            test.remove(test.size() - 1);
         }
         cache = test.toArray(new Integer[test.size()]);
         return e;

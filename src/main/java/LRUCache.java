@@ -1,38 +1,68 @@
+import com.sun.tools.javac.util.List;
+import sun.awt.image.ImageWatched;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 
 public class LRUCache implements Cache {
 
-    private ArrayList<Integer> cache;
+    private Integer[] cache;
     private int size;
     private Storage storage;
     private int hits, misses;
+    private Integer[] changed;
 
     public LRUCache(int size) {
         this.storage = new Storage();
-        this.cache = new ArrayList(size);
+        this.cache = new Integer[size];
+        this.changed = new Integer[size];
         this.size = size;
     }
 
     @Override
     public int get(int e) {
-        if (cache.size() > 0 && cache.contains(e)) {
-            this.hits++;
-            ArrayList<Integer> neu = cache;
-            cache.set(0, e);
-            for (int i = 1; i < cache.size(); i++) {
-                cache.set(i, neu.get(--i));
+        boolean check = true;
+        ArrayList<Integer> test = new ArrayList<>();
+        test.add(0);
+        int count = 0;
+        if (cache.length > 0) {
+            for (Integer i : cache) {
+                if (i != null && e == i) {
+                    this.hits++;
+                    test.set(0, e);
+                    for (int j = 1; j < cache.length; j++) {
+                        if (cache[j] != e) {
+                            test.add(cache[j]);
+                            count++;
+                        }
+                    }
+                    break;
+                    //return e;
+                } else {
+                    test.set(0, e);
+                    for (Integer j = 1; j < cache.length; j++){
+                        if(cache[j] != null && cache[j] != e && count < cache.length){
+                            test.add(cache[j]);
+                            count++;
+                        }
+                    }
+
+                    if(count == cache.length || cache[0] == null){
+                        this.misses++;
+                    } else {
+                        this.hits++;
+                    }
+
+                    break;
+                }
+
             }
-            return e;
-        } else {
-            this.misses++;
-            ArrayList<Integer> neu = cache;
-            cache.set(0, e);
-            for (int i = 1; i < cache.size(); i++) {
-                cache.set(i, neu.get(--i));
-            }
-            return e;
         }
-    }
+        cache = test.toArray(new Integer[test.size()]);
+        return e;
+}
 
     @Override
     public int getHits() {
@@ -46,6 +76,6 @@ public class LRUCache implements Cache {
 
     @Override
     public Integer[] getCacheOrder() {
-        return new Integer[0];
+        return cache;
     }
 }

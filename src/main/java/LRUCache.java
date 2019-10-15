@@ -24,27 +24,27 @@ public class LRUCache implements Cache {
     @Override
     public int get(int e) {
         boolean check = true;
-        ArrayList<Integer> test = new ArrayList<>();
-        test.add(0);
+        ArrayList<Integer> tempcache = new ArrayList<>();
+        tempcache.add(0);
         int count = 0;
         if (cache.length > 0) {
             for (Integer i : cache) {
                 if (i != null && e == i) {
                     this.hits++;
-                    test.set(0, e);
+                    tempcache.set(0, e);
                     for (int j = 1; j < cache.length; j++) {
                         if (cache[j] != e) {
-                            test.add(cache[j]);
+                            tempcache.add(cache[j]);
                             count++;
                         }
                     }
                     break;
                     //return e;
                 } else {
-                    test.set(0, e);
+                    tempcache.set(0, e);
                     for (Integer j = 0; j < cache.length; j++){
                         if(cache[j] != null && cache[j] != e && count < cache.length){
-                            test.add(cache[j]);
+                            tempcache.add(cache[j]);
                             count++;
                         }
                     }
@@ -61,10 +61,10 @@ public class LRUCache implements Cache {
             }
         }
 
-        while(test.size() > size){
-            test.remove(test.size() - 1);
+        while(tempcache.size() > size){
+            tempcache.remove(tempcache.size() - 1);
         }
-        cache = test.toArray(new Integer[test.size()]);
+        cache = tempcache.toArray(new Integer[tempcache.size()]);
         return e;
 }
 
